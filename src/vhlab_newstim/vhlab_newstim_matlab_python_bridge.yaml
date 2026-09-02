@@ -1,0 +1,296 @@
+# MATLAB -> Python bridge contract for the top-level vhlab_newstim package.
+#
+# This file records two things that no per-subpackage bridge can: the mapping
+# between MATLAB folder names and Python subpackage names, and what has been
+# decided about the parts of vhlab-NewStim-matlab that have no Python presence
+# at all. Function-level entries live in the per-subpackage bridge files listed
+# under `subpackages`.
+#
+# Nothing is ported yet. That is the point of writing this file first: the
+# defining fact about this repository is what it deliberately leaves behind,
+# and that half can be written today, in full, from the survey below.
+#
+# See PORTING_INSTRUCTIONS for the convention and the status vocabulary.
+
+project_metadata:
+  bridge_version: "1.1"
+  matlab_repository: "https://github.com/VH-Lab/vhlab-NewStim-matlab"
+  matlab_last_sync_hash: "0ae6822"
+  python_package: "vhlab_newstim"
+  naming_policy: "Strict MATLAB Mirror"
+  indexing_policy: "Semantic Parity (1-based for user concepts, 0-based for internal data)"
+  matlab_file_count: 417
+  coverage: >
+    417 .m files in vhlab-NewStim-matlab; 0 of them are ported. Every one of
+    the 417 is accounted for below, per area, and per function in the three
+    areas that have a Python subpackage waiting for them.
+
+# The decision that shapes this repository, recorded once so that the per-area
+# entries below can refer to it rather than restate it.
+scope_decision:
+  summary: >
+    vhlab-NewStim-matlab will not be fully ported, and this is deliberate
+    rather than a matter of effort. Its presentation half is built on
+    Psychtoolbox, which exists only for MATLAB, so there is nothing to port it
+    to; 49 .m files call Screen() directly and the lineage that reaches them is
+    larger still. This repository reads the data structures that NewStim wrote
+    - principally the stimscript stored as `saveScript` in a stims.mat - and
+    does not present stimuli, drive triggers, or talk to a stimulus computer.
+    Throughout these files, `not_applicable` means that decision, and
+    `not_yet_ported` means a function that is in the reading scope and simply
+    has no Python implementation yet. The two are never interchangeable.
+  writing_is_out_of_scope: >
+    Reading is also the limit in the other direction. MATLAB stores saveScript
+    as an old-style @stimscript object, which scipy.io.loadmat surfaces as a
+    MATLAB-object wrapper rather than a struct, and which scipy.io.savemat
+    cannot write at all. So this repository cannot round-trip a stims.mat even
+    in principle, and the construction half of every class - append, insert,
+    remove, set, setparameters, the `graphical` branch of each constructor - is
+    `not_applicable` for that reason as much as for the Psychtoolbox one. It
+    also means test fixtures have to be real stims.mat files recorded from
+    MATLAB and committed to this repository; they cannot be synthesized in the
+    test.
+
+# Status vocabulary used by every bridge file in this repository.
+status_vocabulary:
+  ported: "A Python implementation exists and is believed equivalent; any divergence is in its decision_log."
+  partially_ported: "Used for an area: some functions in it are ported and some are not. Never used for a single function - a function that diverges is `ported` with the divergence in its decision_log."
+  not_yet_ported: "No Python implementation, but one would be wanted. The decision_log says what blocks it or what would motivate it."
+  not_applicable: "Deliberately not to be ported. The decision_log says why."
+  ported_elsewhere: "The Python implementation lives in another package (vhlab-library-python, vhlab-toolbox-python, NDI-python, ...). The decision_log names it."
+  deprecated_in_matlab: "Superseded on the MATLAB side; do not port."
+  does_not_exist: "The Python function has no MATLAB original. The decision_log says where it came from."
+
+# Python subpackage <- MATLAB folder. The Python names abbreviate the MATLAB
+# ones; this table is the only place that decodes them.
+subpackages:
+  - python_package: "vhlab_newstim.scripts"
+    python_path: "src/vhlab_newstim/scripts"
+    matlab_path: "Scripts"
+    bridge_file: "src/vhlab_newstim/scripts/vhlab_newstim_matlab_python_bridge.yaml"
+    coverage: "0 of 28 MATLAB functions ported. 12 are in the reading scope, 14 are not_applicable, 2 are deprecated_in_matlab."
+
+  - python_package: "vhlab_newstim.stimuli"
+    python_path: "src/vhlab_newstim/stimuli"
+    matlab_path: "Stimuli"
+    bridge_file: "src/vhlab_newstim/stimuli/vhlab_newstim_matlab_python_bridge.yaml"
+    coverage: "0 of 232 MATLAB functions ported. 100 are in the reading scope, 132 are not_applicable. Excludes `Stimuli/Display objs`, which has its own subpackage."
+
+  - python_package: "vhlab_newstim.display"
+    python_path: "src/vhlab_newstim/display"
+    matlab_path: "Stimuli/Display objs"
+    bridge_file: "src/vhlab_newstim/display/vhlab_newstim_matlab_python_bridge.yaml"
+    coverage: "0 of 9 MATLAB functions ported. 4 are in the reading scope, 5 are not_applicable."
+
+# Every MATLAB area, including the three above, with its decision. The counts
+# sum to project_metadata.matlab_file_count; tests/test_bridge.py checks that.
+coverage_areas:
+  - matlab_path: "Scripts/@stimscript"
+    matlab_file_count: 21
+    status: not_yet_ported
+    decision_log: >
+      The root of the reading scope. A stims.mat holds one stimscript, under
+      the variable name saveScript, and every stimulus reached in analysis is
+      reached through it. Seven methods are in scope - the constructor, get,
+      getDisplayOrder, getparameters, getallparameters, numStims and duration -
+      of which four have a caller today: numStims, get, getparameters and
+      getDisplayOrder, called in that combination by
+      ndi.daq.metadatareader.NewStimStims. loadStimScript, unloadStimScript,
+      isloaded and private/stimTime are Psychtoolbox; append, insert, remove,
+      set, plus, setDisplayMethod, strip and saveobj are construction and save.
+      Per function in src/vhlab_newstim/scripts/vhlab_newstim_matlab_python_bridge.yaml.
+
+  - matlab_path: "Scripts/@periodicscript"
+    matlab_file_count: 7
+    status: not_yet_ported
+    decision_log: >
+      A stimscript subclass generating a family of periodicstim stimuli that
+      vary one parameter. Unlike @stimscript, its getparameters returns a real
+      struct, which is how a reader recovers the design of an experiment rather
+      than only its stimuli; getpsstiminds maps parameter values back to
+      stimulus indices. Two files under `old/` are deprecated_in_matlab. Per
+      function in src/vhlab_newstim/scripts/vhlab_newstim_matlab_python_bridge.yaml.
+
+  - matlab_path: "Stimuli (@stimulus and the 18 concrete stimulus classes)"
+    matlab_file_count: 199
+    status: not_yet_ported
+    decision_log: >
+      Nineteen classes, and the split inside each of them is the same: all
+      nineteen define getparameters, which is the read surface; eighteen define
+      loadstim, and every class defines unloadstim, which are Psychtoolbox and
+      cannot be ported at all. Between those sit the per-class accessors -
+      getgrid, getgridvalues, getgridpositions, findtransitions, getstimvalues,
+      getshapemovies, hartleynumbers and their kin - which compute from
+      parameters, involve no Screen() call, and are what reverse-correlation
+      analysis reads back; they are not_yet_ported, not not_applicable. Per
+      function in src/vhlab_newstim/stimuli/vhlab_newstim_matlab_python_bridge.yaml.
+
+  - matlab_path: "Stimuli/Display objs"
+    matlab_file_count: 9
+    status: not_yet_ported
+    decision_log: >
+      @displayprefs and @displaystruct, both carried by every stimulus, and not
+      interchangeable for a reader. displayprefs is persistent data - frames,
+      fps, rect, background pre/post time - and is present in every stimulus
+      read from a stims.mat. displaystruct is the Psychtoolbox display state,
+      offscreen texture handles included, and @stimulus/strip.m clears it
+      before saveobj writes the file, so a reader will always find it empty.
+      Per function in src/vhlab_newstim/display/vhlab_newstim_matlab_python_bridge.yaml.
+
+  - matlab_path: "Stimuli/CustomProcs"
+    matlab_file_count: 2
+    status: not_applicable
+    decision_log: >
+      Custom draw procedures handed to Psychtoolbox by DisplayStimulus. Both
+      call Screen() frame by frame. There is nothing to port them to.
+
+  - matlab_path: "Stimuli/in_development"
+    matlab_file_count: 31
+    status: not_applicable
+    decision_log: >
+      @imagestim, @movingdotsstim and @periodicstim2, marked as unfinished by
+      their own folder name. None was promoted to Stimuli/, so no recorded
+      experiment contains one and no reader will meet one. Revisit only if one
+      is promoted.
+
+  - matlab_path: "NewStimDisplayProcs"
+    matlab_file_count: 17
+    status: not_applicable
+    decision_log: >
+      The display engine: DisplayStimScript, DisplayStimulus, DisplayTiming,
+      the MovieParams and ClipRgn builders, and the Rush/trigger wrappers.
+      Seven of the seventeen call Screen() directly and the rest exist to feed
+      them. This is the Psychtoolbox half of the package in its purest form.
+      One caveat worth recording: stripMTI.m and the MTI structures these
+      procedures produce are read back during analysis, but the MTI a reader
+      cares about arrives from a stims.mat or a stimtimes.txt, not from running
+      these; the analysis-side MTI helpers are in NewStimUtilities.
+
+  - matlab_path: "NewStimServices"
+    matlab_file_count: 62
+    status: not_applicable
+    decision_log: >
+      Rig hardware and screen services: the trigger drivers (VHTrig, FitzTrig,
+      PCI6224Trig, PCI6224sTrig, StimPCIDIO96, StimSerial, StimTrigger,
+      OldNelsonTrig_partial), the stimulus screen and its frame counter
+      (StimScreen, StimScreenBlender, MonitorScreen), gamma correction tables,
+      and the RFmap tools. All of it either drives a data-acquisition card or a
+      serial port on a stimulus computer, or drives Psychtoolbox. This library
+      does not interact with hardware, by design.
+
+  - matlab_path: "NewStimEditor"
+    matlab_file_count: 8
+    status: not_applicable
+    decision_log: >
+      MATLAB GUIs for building and editing scripts and stimuli
+      (ScriptEditor, StimEditor, ScriptObjEditor, RemoteScriptEditor,
+      editdisplayprefs). Stimuli are designed in MATLAB; this repository reads
+      the result.
+
+  - matlab_path: "NewStimProcs"
+    matlab_file_count: 9
+    status: not_applicable
+    decision_log: >
+      Package bootstrap: NewStimPath, NewStimGlobals, NewStimClose,
+      NewStimObjectInit, and the NewStimList / NewStimScriptList registries
+      that each constructor calls into. Python uses package imports and needs
+      no class registry, so there is nothing to port. Note for whoever ports a
+      constructor: the NewStimListAdd call at the top of each MATLAB
+      constructor belongs to this area and should be dropped, not translated.
+
+  - matlab_path: "NewStimUtilities"
+    matlab_file_count: 26
+    status: not_yet_ported
+    decision_log: >
+      The one out-of-subpackage area that is genuinely in the reading scope,
+      and the reason it has no Python subpackage yet is only that nothing has
+      been ported into one. In scope: the MTI and stimscripttimestruct family -
+      DecomposeScriptMTI, DemultiplexScriptMTI, mti2stimonoff,
+      stimscripttimestruct, stimtimestruct, isstimscripttimestruct,
+      isstimtimestruct, mergestimscripttimestruct, unloopstimscripttimestruct,
+      stimscriptmtitrim - plus stimscript2stimvalues and sswhatvaries, which
+      answer "what varied across this script" and are what an analysis asks
+      first. Out of scope within this area: haspsychtbox,
+      VerifyNewStimConfiguration, NewStimConfiguration_analysiscomputer,
+      NewStimMasker, putstimrectglobal, simulate_stimdio_easydaq and the
+      configure interview, which are rig configuration and display geometry.
+      Give this area its own subpackage and bridge file in the commit that
+      ports the first of these; until then it is deliberately area-level.
+
+  - matlab_path: "NewStimTestProcs"
+    matlab_file_count: 4
+    status: not_applicable
+    decision_log: >
+      Psychtoolbox demonstration and smoke-test scripts (DriftDemo2mod,
+      fastnoisedemo_modified, NSLoadAndRunTest, NSGetTestStim). They exist to
+      check that a stimulus computer's display works. Nothing to port.
+
+  - matlab_path: "RemoteCommunication"
+    matlab_file_count: 19
+    status: not_applicable
+    decision_log: >
+      The link between an analysis computer and a stimulus computer: a
+      file-based command protocol (remotecomm, sendremotecommand,
+      writeremote, checkremotedir, StartSlaveMode, transferscripts) plus its
+      path translation and test harness. It exists to make a remote rig show a
+      stimulus, which this library does not do.
+
+  - matlab_path: "Notes"
+    matlab_file_count: 1
+    status: not_applicable
+    decision_log: >
+      Developer notes. __displayStruct.m is a documentation sketch of the
+      displaystruct fields, not a function; the real class is under
+      Stimuli/Display objs. Useful reading when porting displayprefs, but
+      nothing to port.
+
+  - matlab_path: "(repository root)"
+    matlab_file_count: 2
+    status: not_applicable
+    decision_log: >
+      Contents.m, the MATLAB help index for the package, and NewStimInit.m,
+      which sets the MATLAB path and initializes the globals. Python uses
+      package imports; there is nothing to port.
+
+# What is known to be waiting on this repository, recorded from the start so
+# that the question is not re-researched. These are all stopped at exactly the
+# same boundary: something in Python holds a stims.mat and cannot interrogate
+# the stimscript inside it.
+downstream_requirements:
+  - requested_by: "vhlab-library-python, vhlib.StimDecode (VH-Lab/vhlab-library-python#9)"
+    matlab_function: "numStims, get, getparameters, getDisplayOrder"
+    matlab_path: "Scripts/@stimscript"
+    status: not_yet_ported
+    decision_log: >
+      vhlib.StimDecode.getstimscript already loads a stims.mat and hands back
+      `saveScript` untouched, because nothing in Python can interrogate it.
+      Seven vhlib functions stop at that boundary: getstimscriptparameters,
+      getstimscriptsync, mti_from_stimtimes_txt, findtransitionsSGSBL,
+      check_stimtimes_txt_vs_stims_mat, stimscriptgraph, and the incomplete
+      half of repairoverflow_stimtimes_txt. Whoever picks one of those up
+      should be able to see from this file whether the stimscript reader exists
+      here yet; today it does not.
+
+  - requested_by: "NDI-python port of ndi.daq.metadatareader.NewStimStims"
+    matlab_function: "getparameters (on a stimulus, via get on a stimscript)"
+    matlab_path: "Stimuli/@*/getparameters.m"
+    status: not_yet_ported
+    decision_log: >
+      NewStimStims.m:37 calls `getparameters(get(ss,i))` in a loop over
+      numStims(ss), where ss came from getstimscript. That single line is the
+      whole of the minimum useful port: stimscript.get, stimscript.numStims,
+      and getparameters on whichever concrete stimulus class the experiment
+      used. vhlab-library-python's bridge already records this requirement from
+      its side, attributing it to "a Python NewStim"; this is that repository.
+
+  - requested_by: "vhlab-library-python, vhlib.StimDecode.repairoverflow_stimtimes_txt"
+    matlab_function: "getDisplayOrder"
+    matlab_path: "Scripts/@stimscript/getDisplayOrder.m"
+    status: not_yet_ported
+    decision_log: >
+      Repairing a stimtimes.txt whose stimulus ids overflowed at 255 needs the
+      script's display order to know what the ids should have been. Note that
+      the MATLAB side changed under this: vhlab-NewStim-matlab commit 7c7f799
+      made VHTrig emit stimulus numbers modulo 256, so the overflow is now a
+      property of the trigger hardware rather than an accident. Port
+      getDisplayOrder with that in mind.

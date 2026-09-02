@@ -4,6 +4,20 @@ This python repository is designed to interpret data structures and read data fi
 
 **Note:** This library is intended solely for reading data files and data structures. It does not and will not have the capability to interact with hardware in the way that `vhlab-NewStim-matlab` does.
 
+## Scope
+
+This library reads NewStim data structures; it does not present stimuli.
+NewStim's presentation half is built on Psychtoolbox, which exists only for
+MATLAB, so a large part of `vhlab-NewStim-matlab` is deliberately not ported
+rather than merely unported.
+
+Which MATLAB function has a Python home here, which one is out of scope, and
+why, is recorded per function in the
+`vhlab_newstim_matlab_python_bridge.yaml` files under `src/vhlab_newstim/`.
+Read [`PORTING_INSTRUCTIONS`](PORTING_INSTRUCTIONS) before porting anything;
+it explains the convention and the status vocabulary, and `tests/test_bridge.py`
+enforces the mechanical half of it.
+
 ## Installation
 
 It is recommended to use a virtual environment for installation.
@@ -66,3 +80,7 @@ This project uses `pytest` for unit testing.
     ```bash
     pytest -v
     ```
+
+CI runs the same suite on Python 3.10, 3.11 and 3.12, plus `ruff check src/
+tests/`, on every push and pull request.
+

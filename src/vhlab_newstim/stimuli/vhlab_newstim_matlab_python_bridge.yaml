@@ -1,0 +1,3059 @@
+# MATLAB -> Python bridge contract for the vhlab_newstim.stimuli package.
+#
+# Every module in this package must appear here, and every MATLAB function
+# under `Stimuli` must appear here with a `status`. Nothing in this package is
+# ported yet: the entries below are the survey, written before the first port
+# so that each one can be updated in the commit that ports its function.
+#
+# See PORTING_INSTRUCTIONS for the convention and the status vocabulary.
+
+project_metadata:
+  bridge_version: "1.1"
+  matlab_repository: "https://github.com/VH-Lab/vhlab-NewStim-matlab"
+  matlab_package_path: "Stimuli"
+  matlab_last_sync_hash: "0ae6822"
+  python_package: "vhlab_newstim.stimuli"
+  naming_policy: "Strict MATLAB Mirror"
+  indexing_policy: "Semantic Parity (1-based for user concepts, 0-based for internal data)"
+  matlab_file_count: 232
+  coverage: "0 of 232 MATLAB functions ported; 132 not_applicable, 100 not_yet_ported."
+  notes: >
+    Nineteen stimulus classes - @stimulus and its eighteen concrete children -
+    plus three more under in_development and two custom draw procedures. The
+    split within each class is the same everywhere and is unusually clean:
+    getparameters is the read surface and all nineteen classes define one,
+    while loadstim / unloadstim / isloaded / customdraw / animate are
+    Psychtoolbox and cannot be ported at all. The per-class grid, frame and
+    value accessors sit in between - numeric, portable, and what reverse-
+    correlation analysis actually reads - and are marked not_yet_ported rather
+    than not_applicable.
+
+functions:
+  - name: blank
+    matlab_class: blank
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blank/blank.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the blank class. A Python reader needs the data half of
+      it - the object recovered from a stims.mat has to be represented as
+      something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: getparameters
+    matlab_class: blank
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blank/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: blinkingstim
+    matlab_class: blinkingstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/blinkingstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the blinkingstim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: duration
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: findtransitions
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/findtransitions.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Finds frames where a grid cell changed between given colours. This is
+      what reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getgrid
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/getgrid.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the geometry of the stimulus grid. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: getgridorder
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/getgridorder.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the order in which grid positions were shown. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getgridpositions
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/getgridpositions.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the screen position of each grid number. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: getgridvalues
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/getgridvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the value shown in each grid cell on each frame. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getparameters
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: grid2screenimage
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/grid2screenimage.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Renders one grid position to a screen-sized image. Numeric, no
+      Psychtoolbox: it computes the image, it does not display it. In scope
+      for reconstructing what was shown at a given grid position during
+      analysis.
+
+  - name: loadstim
+    matlab_class: blinkingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@blinkingstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verify
+    matlab_class: blinkingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@blinkingstim/private/verify.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: reverse_corr
+    matlab_class: blinkingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@blinkingstim/reverse_corr.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Reverse correlation of a blinkingstim against spike data. Its own first
+      comment line says 'broken, needs work big time', so port the analysis
+      from the working version in the analysis repositories rather than
+      translating this.
+
+  - name: unloadstim
+    matlab_class: blinkingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@blinkingstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: centersurroundstim
+    matlab_class: centersurroundstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@centersurroundstim/centersurroundstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the centersurroundstim class. A Python reader needs the
+      data half of it - the object recovered from a stims.mat has to be
+      represented as something - but only that half: the MATLAB constructor
+      also registers the class with NewStimListAdd and, when handed
+      'graphical', opens a parameter dialog. Port it as a data class built
+      from the struct scipy.io.loadmat hands back, not as a translation of the
+      constructor's control flow.
+
+  - name: duration
+    matlab_class: centersurroundstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@centersurroundstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: centersurroundstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@centersurroundstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: centersurroundstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@centersurroundstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verifycentersurroundstim
+    matlab_class: centersurroundstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@centersurroundstim/private/verifycentersurroundstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: unloadstim
+    matlab_class: centersurroundstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@centersurroundstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: combinemoviestim
+    matlab_class: combinemoviestim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@combinemoviestim/combinemoviestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the combinemoviestim class. A Python reader needs the
+      data half of it - the object recovered from a stims.mat has to be
+      represented as something - but only that half: the MATLAB constructor
+      also registers the class with NewStimListAdd and, when handed
+      'graphical', opens a parameter dialog. Port it as a data class built
+      from the struct scipy.io.loadmat hands back, not as a translation of the
+      constructor's control flow.
+
+  - name: duration
+    matlab_class: combinemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@combinemoviestim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: edit_graphical
+    matlab_class: combinemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@combinemoviestim/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: getparameters
+    matlab_class: combinemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@combinemoviestim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: combinemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@combinemoviestim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: setparameters
+    matlab_class: combinemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@combinemoviestim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: unloadstim
+    matlab_class: combinemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@combinemoviestim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: append
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/append.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: compose_ca
+    matlab_class: compose_ca
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/compose_ca.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the compose_ca class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: duration
+    matlab_class: compose_ca
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: edit_graphical
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: get
+    matlab_class: compose_ca
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/get.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Data-level: computes its result from the stimulus parameters alone, with
+      no Psychtoolbox involvement, so it is portable. Not yet ported because
+      no Python caller needs it; see the area entry in the top-level bridge
+      file for what the reading scope covers.
+
+  - name: getclutindex
+    matlab_class: compose_ca
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/getclutindex.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the colour-lookup-table index of a composed stimulus. This is
+      what reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getparameters
+    matlab_class: compose_ca
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: insert
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/insert.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: isloaded
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: numStims
+    matlab_class: compose_ca
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@compose_ca/numStims.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Data-level: computes its result from the stimulus parameters alone, with
+      no Psychtoolbox involvement, so it is portable. Not yet ported because
+      no Python caller needs it; see the area entry in the top-level bridge
+      file for what the reading scope covers.
+
+  - name: editfig
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/private/editfig.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: remove
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/remove.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: set
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/set.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setclutindex
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/setclutindex.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setparameters
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: unloadstim
+    matlab_class: compose_ca
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@compose_ca/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@flashimageseqstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: flashimageseqstim
+    matlab_class: flashimageseqstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@flashimageseqstim/flashimageseqstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the flashimageseqstim class. A Python reader needs the
+      data half of it - the object recovered from a stims.mat has to be
+      represented as something - but only that half: the MATLAB constructor
+      also registers the class with NewStimListAdd and, when handed
+      'graphical', opens a parameter dialog. Port it as a data class built
+      from the struct scipy.io.loadmat hands back, not as a translation of the
+      constructor's control flow.
+
+  - name: frame_sequence
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@flashimageseqstim/frame_sequence.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the frame-by-frame image sequence. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: get_graphical_input
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@flashimageseqstim/get_graphical_input.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: getparameters
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@flashimageseqstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@flashimageseqstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verify
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@flashimageseqstim/private/verify.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: unloadstim
+    matlab_class: flashimageseqstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@flashimageseqstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw
+    matlab_class: glidergridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@glidergridstim/customdraw.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: glidergridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getgrid
+    matlab_class: glidergridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/getgrid.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the geometry of the stimulus grid. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: getgridvalues
+    matlab_class: glidergridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/getgridvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the value shown in each grid cell on each frame. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getparameters
+    matlab_class: glidergridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: glidergridstim
+    matlab_class: glidergridstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/glidergridstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the glidergridstim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: loadstim
+    matlab_class: glidergridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@glidergridstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verifyglidergridstim
+    matlab_class: glidergridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@glidergridstim/private/verifyglidergridstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: unloadstim
+    matlab_class: glidergridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@glidergridstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: visual_stim_row_correlator1_embed
+    matlab_class: glidergridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@glidergridstim/visual_stim_row_correlator1_embed.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: duration
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: hartleynumbers
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/hartleynumbers.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the Hartley basis numbers to be shown. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: hartleyrange
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/hartleyrange.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the range of Hartley parameters covered. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: hartleystim
+    matlab_class: hartleystim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/hartleystim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the hartleystim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: loadstim
+    matlab_class: hartleystim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@hartleystim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: makeclippingrgn
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/makeclippingrgn.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: numframes
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/numframes.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the number of frames in the stimulus. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: verifyhartleystim
+    matlab_class: hartleystim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@hartleystim/private/verifyhartleystim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: pscolors
+    matlab_class: hartleystim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@hartleystim/pscolors.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: unloadstim
+    matlab_class: hartleystim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@hartleystim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw
+    matlab_class: imagebufferstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imagebufferstim/customdraw.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: imagebufferstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imagebufferstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: imagebufferstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imagebufferstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: imagebufferstim
+    matlab_class: imagebufferstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imagebufferstim/imagebufferstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the imagebufferstim class. A Python reader needs the
+      data half of it - the object recovered from a stims.mat has to be
+      represented as something - but only that half: the MATLAB constructor
+      also registers the class with NewStimListAdd and, when handed
+      'graphical', opens a parameter dialog. Port it as a data class built
+      from the struct scipy.io.loadmat hands back, not as a translation of the
+      constructor's control flow.
+
+  - name: loadstim
+    matlab_class: imagebufferstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imagebufferstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verifyimagebufferstim
+    matlab_class: imagebufferstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imagebufferstim/private/verifyimagebufferstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: pscolors
+    matlab_class: imagebufferstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imagebufferstim/pscolors.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: uipickfiles
+    matlab_class: imagebufferstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imagebufferstim/uipickfiles.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: unloadstim
+    matlab_class: imagebufferstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imagebufferstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: imageseq
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imageseq/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getimagefiles
+    matlab_class: imageseq
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imageseq/getimagefiles.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the list of image files the stimulus draws from. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getparameters
+    matlab_class: imageseq
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imageseq/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: imageseq
+    matlab_class: imageseq
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@imageseq/imageseq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the imageseq class. A Python reader needs the data half
+      of it - the object recovered from a stims.mat has to be represented as
+      something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: loadstim
+    matlab_class: imageseq
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imageseq/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verifyimageseq
+    matlab_class: imageseq
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imageseq/private/verifyimageseq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: setparameters
+    matlab_class: imageseq
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imageseq/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: unloadstim
+    matlab_class: imageseq
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@imageseq/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: append
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/append.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: duration
+    matlab_class: multistim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@multistim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: edit_graphical
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: get
+    matlab_class: multistim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@multistim/get.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Data-level: computes its result from the stimulus parameters alone, with
+      no Psychtoolbox involvement, so it is portable. Not yet ported because
+      no Python caller needs it; see the area entry in the top-level bridge
+      file for what the reading scope covers.
+
+  - name: getparameters
+    matlab_class: multistim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@multistim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: insert
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/insert.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: isloaded
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: multistim
+    matlab_class: multistim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@multistim/multistim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the multistim class. A Python reader needs the data half
+      of it - the object recovered from a stims.mat has to be represented as
+      something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: numStims
+    matlab_class: multistim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@multistim/numStims.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Data-level: computes its result from the stimulus parameters alone, with
+      no Psychtoolbox involvement, so it is portable. Not yet ported because
+      no Python caller needs it; see the area entry in the top-level bridge
+      file for what the reading scope covers.
+
+  - name: editfig
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/private/editfig.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: remove
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/remove.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: set
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/set.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setparameters
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: unloadstim
+    matlab_class: multistim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@multistim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: animate
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/animate.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/customdraw.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw_overlay
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/customdraw_overlay.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw_plain
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/customdraw_plain.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstimPTB3
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/loadstimPTB3.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: make_ps_add
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/make_ps_add.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: make_ps_mask
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/make_ps_mask.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: make_ps_overlay
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/make_ps_overlay.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: makeclippingrgn
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/makeclippingrgn.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: periodicstim
+    matlab_class: periodicstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/periodicstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the periodicstim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: verifyperiodicstim
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/private/verifyperiodicstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: pscolors
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/pscolors.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: spatial_phase
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/spatial_phase.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: spatialphase2gratingimage
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/spatialphase2gratingimage.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: temporal_phase
+    matlab_class: periodicstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@periodicstim/temporal_phase.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Display-pipeline helper: it computes image or colour data numerically
+      (no Screen() call of its own) but is reached only from loadstim.
+      Portable in principle, and the way to reconstruct the presented image in
+      Python if an analysis ever needs the pixels; not_yet_ported rather than
+      not_applicable for exactly that reason. Nothing needs it today.
+
+  - name: unloadstim
+    matlab_class: periodicstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@periodicstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: polygonstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@polygonstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: polygonstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@polygonstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: polygonstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@polygonstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: polygonstim
+    matlab_class: polygonstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@polygonstim/polygonstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the polygonstim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: verifylightbarstim
+    matlab_class: polygonstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@polygonstim/private/verifylightbarstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: unloadstim
+    matlab_class: polygonstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@polygonstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: quicktimestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@quicktimestim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: quicktimestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@quicktimestim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: isloaded
+    matlab_class: quicktimestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@quicktimestim/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim
+    matlab_class: quicktimestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@quicktimestim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: quicktimestim
+    matlab_class: quicktimestim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@quicktimestim/quicktimestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the quicktimestim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: unloadstim
+    matlab_class: quicktimestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@quicktimestim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: customdraw
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/customdraw.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: rcgratingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@rcgratingstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: edit_graphical
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: getdisplayorder
+    matlab_class: rcgratingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@rcgratingstim/getdisplayorder.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The within-stimulus display order of an rcgratingstim's individual
+      gratings, distinct from a stimscript's display order over stimuli.
+      Reverse-correlation analysis needs it. Note the lower-case name:
+      @stimscript spells the same idea getDisplayOrder, and the Python port
+      should not silently unify them.
+
+  - name: getparameters
+    matlab_class: rcgratingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@rcgratingstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: getstimvalues
+    matlab_class: rcgratingstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@rcgratingstim/getstimvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The parameters of each individual grating within an rcgratingstim. The
+      read surface for this class, alongside getparameters.
+
+  - name: loadstim
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstimPTB3
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/loadstimPTB3.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: rcgratingstim
+    matlab_class: rcgratingstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@rcgratingstim/rcgratingstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the rcgratingstim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: setparameters
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: unloadstim
+    matlab_class: rcgratingstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@rcgratingstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: addshapemovies
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/addshapemovies.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: duration
+    matlab_class: shapemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: edit_graphical
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: eq
+    matlab_class: shapemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/eq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Value comparison of two objects. Portable; a Python port would be
+      __eq__. No caller needs it yet.
+
+  - name: getparameters
+    matlab_class: shapemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: getshapeframes
+    matlab_class: shapemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/getshapeframes.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the first-frame indices of each shape movie. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getshapemovies
+    matlab_class: shapemoviestim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/getshapemovies.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the shape movies stored in the stimulus. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: loadstim
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim_old
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/loadstim_old.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: editfig
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/private/editfig.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: editfigtmp
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/private/editfigtmp.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Interactive parameter editing, built on MATLAB figures and uicontrols.
+      Stimuli are designed and edited in MATLAB; this repository reads what
+      that produced. Out of scope.
+
+  - name: verifyshape
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/private/verifyshape.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: verifyshapemoviestim
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/private/verifyshapemoviestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: setparameters
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setshapemovies
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/setshapemovies.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: shapemoviestim
+    matlab_class: shapemoviestim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@shapemoviestim/shapemoviestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the shapemoviestim class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: unloadstim
+    matlab_class: shapemoviestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@shapemoviestim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: stimulus
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: eq
+    matlab_class: stimulus
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/eq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Value comparison of two objects. Portable; a Python port would be
+      __eq__. No caller needs it yet.
+
+  - name: getdisplayprefs
+    matlab_class: stimulus
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/getdisplayprefs.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the displayprefs object, which is persistent data: it survives
+      strip and is present in every stimulus read from a stims.mat. In scope;
+      see the vhlab_newstim.display bridge file.
+
+  - name: getdisplaystruct
+    matlab_class: stimulus
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/getdisplaystruct.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the displaystruct. Kept in scope only so the accessor exists and
+      can say the field is empty: strip clears displaystruct before save, so a
+      stimulus read from a stims.mat has none. See the displaystruct entry in
+      the vhlab_newstim.display bridge file.
+
+  - name: getparameters
+    matlab_class: stimulus
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns empty: the base class has no parameters. Every concrete class
+      overrides it, and those overrides are the read surface. Port it as the
+      base-class default so the polymorphic call is total.
+
+  - name: isloaded
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: saveobj
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/saveobj.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The save path. strip clears the displaystruct (the Psychtoolbox display
+      state) and saveobj calls it, so a stims.mat on disk is already stripped
+      and a Python reader has nothing to strip. Writing stims.mat is out of
+      scope in any case: scipy.io.savemat cannot write an old-style MATLAB
+      object.
+
+  - name: setdisplayprefs
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/setdisplayprefs.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setdisplaystruct
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/setdisplaystruct.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setparameters
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: stimulus
+    matlab_class: stimulus
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stimulus/stimulus.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the base class every stimulus inherits from. It carries
+      the displayprefs, the displaystruct and the loaded flag; the first two
+      are what a reader wants. Port it as the base data class.
+
+  - name: strip
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/strip.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The save path. strip clears the displaystruct (the Psychtoolbox display
+      state) and saveobj calls it, so a stims.mat on disk is already stripped
+      and a Python reader has nothing to strip. Writing stims.mat is out of
+      scope in any case: scipy.io.savemat cannot write an old-style MATLAB
+      object.
+
+  - name: unloadstim
+    matlab_class: stimulus
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stimulus/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: autocorrelation
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/autocorrelation.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Autocorrelation of a stochasticgridstim, used when correcting a reverse-
+      correlation estimate for correlations in the stimulus. Numeric and
+      portable; wanted when the reverse-correlation analysis is.
+
+  - name: customdraw
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/customdraw.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: findtransitions
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/findtransitions.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Finds frames where a grid cell changed between given colours. This is
+      what reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getgrid
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/getgrid.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the geometry of the stimulus grid. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: getgridpositions
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/getgridpositions.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the screen position of each grid number. This is what reverse-
+      correlation and frame-by-frame analysis read back out of a stimulus, so
+      it is squarely in the reading scope. Numeric and portable. Not yet
+      ported - no Python caller yet.
+
+  - name: getgridvalues
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/getgridvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the value shown in each grid cell on each frame. This is what
+      reverse-correlation and frame-by-frame analysis read back out of a
+      stimulus, so it is squarely in the reading scope. Numeric and portable.
+      Not yet ported - no Python caller yet.
+
+  - name: getparameters
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: loadstim
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstimbkup
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/loadstimbkup.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: verifystochasticgridstim
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/private/verifystochasticgridstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: setparameters
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: stochasticgridstim
+    matlab_class: stochasticgridstim
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@stochasticgridstim/stochasticgridstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the stochasticgridstim class. A Python reader needs the
+      data half of it - the object recovered from a stims.mat has to be
+      represented as something - but only that half: the MATLAB constructor
+      also registers the class with NewStimListAdd and, when handed
+      'graphical', opens a parameter dialog. Port it as a data class built
+      from the struct scipy.io.loadmat hands back, not as a translation of the
+      constructor's control flow.
+
+  - name: unloadstim
+    matlab_class: stochasticgridstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@stochasticgridstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: duration
+    matlab_class: wavsound
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@wavsound/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: getparameters
+    matlab_class: wavsound
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/@wavsound/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The read surface. Returns the parameter struct that describes what was
+      shown, which is the whole reason this repository exists:
+      ndi.daq.metadatareader.NewStimStims calls getparameters(get(ss,i)) on
+      every stimulus of a recovered stimscript. Port this before anything else
+      in this class.
+
+  - name: isloaded
+    matlab_class: wavsound
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@wavsound/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadstim
+    matlab_class: wavsound
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@wavsound/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: unloadstim
+    matlab_class: wavsound
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/@wavsound/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: wavsound
+    matlab_class: wavsound
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/@wavsound/wavsound.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the wavsound class. A Python reader needs the data half
+      of it - the object recovered from a stims.mat has to be represented as
+      something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: BasicMovieCustomDrawFunc
+    type: function
+    status: not_applicable
+    matlab_path: "Stimuli/CustomProcs/BasicMovieCustomDrawFunc.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      A custom draw procedure: it is handed to Psychtoolbox by DisplayStimulus
+      and calls Screen() itself, frame by frame. There is nothing to port it
+      to.
+
+  - name: blinkstim
+    type: function
+    status: not_applicable
+    matlab_path: "Stimuli/CustomProcs/blinkstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      A custom draw procedure: it is handed to Psychtoolbox by DisplayStimulus
+      and calls Screen() itself, frame by frame. There is nothing to port it
+      to.
+
+  - name: duration
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: getparameters
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: imagestim
+    matlab_class: imagestim
+    type: class
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/imagestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: loadstim
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: verifyimagestim
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/private/verifyimagestim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: setparameters
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: unloadstim
+    matlab_class: imagestim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@imagestim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: duration
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: edit_graphical
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/edit_graphical.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: getparameters
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: isloaded
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: loadstim
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: movingdotsstim
+    matlab_class: movingdotsstim
+    type: class
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/movingdotsstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: editdotsstim
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/private/editdotsstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: editdotsstimtmp2
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/private/editdotsstimtmp2.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: verifymovingdotsstimparams
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/private/verifymovingdotsstimparams.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: setparameters
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/setparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: unloadstim
+    matlab_class: movingdotsstim
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@movingdotsstim/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: animate
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/animate.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: duration
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: getparameters
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: loadstim
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/loadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: loadstimPTB3
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/loadstimPTB3.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: makeclippingrgn
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/makeclippingrgn.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: periodicstim2
+    matlab_class: periodicstim2
+    type: class
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/periodicstim2.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: verifyperiodicstim
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/private/verifyperiodicstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: pscolors
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/pscolors.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: spatial_phase
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/spatial_phase.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: spatialphase2gratingimage
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/spatialphase2gratingimage.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: temporal_phase
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/temporal_phase.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.
+
+  - name: unloadstim
+    matlab_class: periodicstim2
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/in_development/@periodicstim2/unloadstim.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Under Stimuli/in_development, marked as unfinished by its own folder
+      name. The class was never promoted to Stimuli/, so no recorded
+      experiment can contain one and no reader will ever meet it. Do not port;
+      revisit only if it is promoted.

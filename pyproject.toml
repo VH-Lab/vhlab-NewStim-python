@@ -15,13 +15,19 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
 test = [
     "pytest",
+    "pyyaml",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# The MATLAB -> Python bridge contract files ship with the package: they are
+# the record of where each function came from. See PORTING_INSTRUCTIONS.
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
