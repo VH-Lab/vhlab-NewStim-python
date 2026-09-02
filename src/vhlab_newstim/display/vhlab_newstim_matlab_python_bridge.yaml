@@ -1,0 +1,137 @@
+# MATLAB -> Python bridge contract for the vhlab_newstim.display package.
+#
+# Every module in this package must appear here, and every MATLAB function
+# under `Stimuli/Display objs` must appear here with a `status`. Nothing in
+# this package is ported yet: the entries below are the survey, written before
+# the first port so that each one can be updated in the commit that ports its
+# function.
+#
+# See PORTING_INSTRUCTIONS for the convention and the status vocabulary.
+
+project_metadata:
+  bridge_version: "1.1"
+  matlab_repository: "https://github.com/VH-Lab/vhlab-NewStim-matlab"
+  matlab_package_path: "Stimuli/Display objs"
+  matlab_last_sync_hash: "0ae6822"
+  python_package: "vhlab_newstim.display"
+  naming_policy: "Strict MATLAB Mirror"
+  indexing_policy: "Semantic Parity (1-based for user concepts, 0-based for internal data)"
+  matlab_file_count: 9
+  coverage: "0 of 9 MATLAB functions ported; 5 not_applicable, 4 not_yet_ported."
+  notes: >
+    Two data objects that every stimulus carries. They are not interchangeable
+    for a reader: displayprefs is persistent - frames, fps, rect, background
+    pre/post time - and is present in every stimulus read from a stims.mat,
+    whereas displaystruct holds the Psychtoolbox display state, including
+    offscreen texture handles, and @stimulus/strip.m clears it before saveobj
+    writes the file. So displayprefs is the one worth porting; displaystruct
+    is worth representing only as the empty field a reader will always find.
+
+functions:
+  - name: displayprefs
+    matlab_class: displayprefs
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/Display objs/@displayprefs/displayprefs.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the displayprefs class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: eq
+    matlab_class: displayprefs
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/Display objs/@displayprefs/eq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Value comparison of two objects. Portable; a Python port would be
+      __eq__. No caller needs it yet.
+
+  - name: verify
+    matlab_class: displayprefs
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/Display objs/@displayprefs/private/verify.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: setdefaults
+    matlab_class: displayprefs
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/Display objs/@displayprefs/setdefaults.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setvalues
+    matlab_class: displayprefs
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/Display objs/@displayprefs/setvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: displaystruct
+    matlab_class: displaystruct
+    type: class
+    status: not_yet_ported
+    matlab_path: "Stimuli/Display objs/@displaystruct/displaystruct.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the displaystruct class. A Python reader needs the data
+      half of it - the object recovered from a stims.mat has to be represented
+      as something - but only that half: the MATLAB constructor also registers
+      the class with NewStimListAdd and, when handed 'graphical', opens a
+      parameter dialog. Port it as a data class built from the struct
+      scipy.io.loadmat hands back, not as a translation of the constructor's
+      control flow.
+
+  - name: eq
+    matlab_class: displaystruct
+    type: method
+    status: not_yet_ported
+    matlab_path: "Stimuli/Display objs/@displaystruct/eq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Value comparison of two objects. Portable; a Python port would be
+      __eq__. No caller needs it yet.
+
+  - name: verify
+    matlab_class: displaystruct
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/Display objs/@displaystruct/private/verify.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: setvalues
+    matlab_class: displaystruct
+    type: method
+    status: not_applicable
+    matlab_path: "Stimuli/Display objs/@displaystruct/setvalues.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.

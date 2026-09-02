@@ -1,0 +1,149 @@
+## Scope: this is a reader, and that is deliberate
+
+`vhlab-NewStim-matlab` will not be fully ported. Its presentation half is built
+on Psychtoolbox, which exists only for MATLAB, so there is nothing to port it
+to: 49 of its 417 `.m` files call `Screen()` directly and the lineage that
+reaches them is larger still. This library reads the data structures NewStim
+wrote -- principally the `stimscript` stored as `saveScript` in a `stims.mat`
+-- and does not present stimuli, drive triggers, or talk to a stimulus
+computer.
+
+Reading is the limit in the other direction too. MATLAB stores `saveScript` as
+an old-style `@stimscript` object, which `scipy.io.loadmat` surfaces as a
+MATLAB-object wrapper rather than a struct and which `scipy.io.savemat` cannot
+write at all. So a `stims.mat` cannot be round-tripped even in principle, and
+the construction half of every class -- `append`, `insert`, `remove`, `set`,
+`setparameters`, the `'graphical'` branch of each constructor -- is out of
+scope for that reason as much as for the Psychtoolbox one.
+
+Two practical consequences for anyone writing the first reader:
+
+- Test fixtures have to be real `stims.mat` files recorded from MATLAB and
+  committed to this repository. They cannot be synthesized in the test, because
+  `savemat` cannot write the object the test needs to read.
+- The MATLAB constructors call `NewStimListAdd` to register the class with the
+  package's runtime registry (`NewStimProcs/`). Python needs no such registry;
+  drop that call rather than translating it.
+
+## Namespace
+
+The package is `vhlab_newstim`, in a src-layout: importable code lives under
+`src/vhlab_newstim/`. Functions and classes keep their MATLAB names, so a
+MATLAB `getDisplayOrder` is a Python `getDisplayOrder`, not `get_display_order`
+-- see `naming_policy` in the bridge files. Where MATLAB spells the same idea
+two ways (`@stimscript/getDisplayOrder` and `@rcgratingstim/getdisplayorder`),
+keep both spellings; they are different functions and unifying them silently
+would lose that.
+
+## Folder mapping
+
+The Python package does not mirror the MATLAB folder names; the abbreviations
+are decoded here and nowhere else, so keep this table current.
+
+| MATLAB folder            | Python package                 |
+|--------------------------|--------------------------------|
+| `Scripts/`               | `src/vhlab_newstim/scripts/`   |
+| `Stimuli/`               | `src/vhlab_newstim/stimuli/`   |
+| `Stimuli/Display objs/`  | `src/vhlab_newstim/display/`   |
+
+`NewStimUtilities/` is in the reading scope but has no Python subpackage yet;
+it is accounted for at area level in the top-level bridge file. Give it a
+subpackage and its own bridge file in the commit that ports the first function
+out of it, and add the row above. Every other MATLAB folder is out of scope,
+per area, in the top-level bridge file.
+
+## Bridge files
+
+Every `vhlab_newstim` package carries a `vhlab_newstim_matlab_python_bridge.yaml`
+recording, for each function, where it came from in MATLAB and what was decided
+along the way. This is the same convention NDI-python, did-python and
+vhlab-library-python use (`ndi_matlab_python_bridge.yaml`,
+`did_matlab_python_bridge.yaml`, `vhlib_matlab_python_bridge.yaml`); the file
+name is `<python package>_matlab_python_bridge.yaml`.
+
+- `src/vhlab_newstim/vhlab_newstim_matlab_python_bridge.yaml` -- the folder
+  mapping above, the scope decision, the status vocabulary, a per-area decision
+  for every part of vhlab-NewStim-matlab including the Psychtoolbox areas that
+  will never be ported, and `downstream_requirements`: what is known to be
+  waiting on this repository.
+- `scripts/`, `stimuli/`, `display/` -- one file each, per function.
+
+Each function entry carries:
+
+- `matlab_path` / `python_path` -- the mapping, in both directions. Someone
+  looking for the Python home of a MATLAB function, or asking whether it was
+  ported at all, should get their answer from these files in one lookup.
+  `python_path` is present only once something is ported.
+- `matlab_class` -- the MATLAB class a method belongs to, since the same method
+  name (`getparameters`, `duration`, `loadstim`) is defined by many classes and
+  the name alone does not identify an entry. `matlab_path` is the unique key.
+- `matlab_last_sync_hash` -- the vhlab-NewStim-matlab revision the entry was
+  checked against, so drift is detectable rather than assumed.
+- `input_arguments` / `output_arguments` -- with `type_matlab` and
+  `type_python`, and `python_name` wherever an argument had to be renamed.
+  Required once a function is `ported`.
+- `decision_log` -- where a port deliberately diverges, and why. This is the
+  field that stops the same question being re-litigated.
+- `status` -- one of `ported`, `not_yet_ported`, `not_applicable`,
+  `ported_elsewhere`, `deprecated_in_matlab`, `does_not_exist`, defined in
+  `status_vocabulary` in the top-level bridge file. `partially_ported` is for
+  areas only: a single function that diverges is `ported`, with the divergence
+  in its `decision_log`.
+
+`not_applicable` and `not_yet_ported` are never interchangeable here.
+`not_applicable` means the Psychtoolbox-and-hardware decision above, or
+construction, or a GUI; `not_yet_ported` means a function that is in the
+reading scope and simply has no Python implementation yet. Keeping those two
+apart is most of the value of these files.
+
+A `ported` entry looks like this:
+
+```yaml
+  - name: getDisplayOrder
+    matlab_class: stimscript
+    type: method
+    status: ported
+    matlab_path: "Scripts/@stimscript/getDisplayOrder.m"
+    matlab_last_sync_hash: "0ae6822"
+    python_path: "src/vhlab_newstim/scripts/stimscript.py"
+    input_arguments:
+      - name: S
+        type_matlab: "stimscript object"
+        type_python: "StimScript"
+        python_name: "self"
+    output_arguments:
+      - name: dispOrder
+        type_matlab: "double array"
+        type_python: "np.ndarray"
+    decision_log: >
+      Returns 1-based indices into the stimulus list, kept 1-based in Python
+      under the indexing policy: they are a user-facing concept that also
+      appears in stimtimes.txt.
+```
+
+When you port a function, update its entry in the same commit. When you decide
+NOT to port something, say so with a `not_applicable` or `not_yet_ported` entry
+and a reason -- otherwise "not ported" and "deliberately skipped" are
+indistinguishable, and the next person re-does the research.
+
+`tests/test_bridge.py` enforces the mechanical part: every module has an entry,
+every `python_path` exists, every `status` is from the vocabulary, every entry
+has a `decision_log`, and the per-area counts in the top-level file still sum to
+the recorded total. What it cannot check -- because vhlab-NewStim-matlab is not
+checked out in CI -- is that every MATLAB file still has an entry. When you bump
+`matlab_last_sync_hash`, diff the MATLAB tree yourself and add entries for
+anything new.
+
+## Testing
+
+Unit tests should be written for all functions and classes. This repository
+uses `pytest` (`vhlab-library-python` uses `unittest`; do not import its
+runner).
+
+```bash
+pip install -e ".[test]"
+pytest -v
+```
+
+CI runs the suite on Python 3.10, 3.11 and 3.12, plus `ruff check src/ tests/`,
+on every push and pull request.

@@ -1,0 +1,371 @@
+# MATLAB -> Python bridge contract for the vhlab_newstim.scripts package.
+#
+# Every module in this package must appear here, and every MATLAB function
+# under `Scripts` must appear here with a `status`. Nothing in this package is
+# ported yet: the entries below are the survey, written before the first port
+# so that each one can be updated in the commit that ports its function.
+#
+# See PORTING_INSTRUCTIONS for the convention and the status vocabulary.
+
+project_metadata:
+  bridge_version: "1.1"
+  matlab_repository: "https://github.com/VH-Lab/vhlab-NewStim-matlab"
+  matlab_package_path: "Scripts"
+  matlab_last_sync_hash: "0ae6822"
+  python_package: "vhlab_newstim.scripts"
+  naming_policy: "Strict MATLAB Mirror"
+  indexing_policy: "Semantic Parity (1-based for user concepts, 0-based for internal data)"
+  matlab_file_count: 28
+  coverage: "0 of 28 MATLAB functions ported; 2 deprecated_in_matlab, 14 not_applicable, 12 not_yet_ported."
+  notes: >
+    The stimscript object is the root of everything this repository reads: a
+    stims.mat holds one, under the variable name saveScript, and every
+    stimulus reached in analysis is reached through it. Four of its methods
+    have a caller today - numStims, get, getparameters and getDisplayOrder -
+    and those four are the smallest useful port. The Psychtoolbox half of the
+    class is loadStimScript / unloadStimScript / isloaded, and the
+    construction half is append, insert, remove, set, plus and
+    setDisplayMethod; both are out of scope, per file, below.
+
+functions:
+  - name: getparameters
+    matlab_class: periodicscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@periodicscript/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Unlike @stimscript/getparameters this returns a real parameter struct,
+      describing which parameter was varied and over what range. In scope: it
+      is how a reader recovers the design of the experiment rather than only
+      its stimuli.
+
+  - name: getpsstiminds
+    matlab_class: periodicscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@periodicscript/getpsstiminds.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns the stimulus indices matching given parameter values. This is
+      analysis, and is the periodicscript equivalent of what vhlib.StimDecode
+      callers do by hand. Portable; wanted once the reader exists.
+
+  - name: periodicscript
+    matlab_class: periodicscript
+    type: class
+    status: deprecated_in_matlab
+    matlab_path: "Scripts/@periodicscript/old/periodicscript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Superseded by Scripts/@periodicscript/periodicscript.m, and kept only in
+      an 'old' folder. Do not port.
+
+  - name: periodicscript2
+    matlab_class: periodicscript
+    type: method
+    status: deprecated_in_matlab
+    matlab_path: "Scripts/@periodicscript/old/periodicscript2.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Superseded by Scripts/@periodicscript/periodicscript.m, and kept only in
+      an 'old' folder. Do not port.
+
+  - name: periodicscript
+    matlab_class: periodicscript
+    type: class
+    status: not_yet_ported
+    matlab_path: "Scripts/@periodicscript/periodicscript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for periodicscript, a stimscript subclass that generates a
+      family of periodicstim stimuli varying one parameter. Data half in
+      scope, as for stimscript; the 'graphical' branch is not.
+
+  - name: plus
+    matlab_class: periodicscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@periodicscript/plus.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: verifyperiodicscript
+    matlab_class: periodicscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@periodicscript/private/verifyperiodicscript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private parameter validation for the constructor. Construction is out of
+      scope (see the constructor entry); reading does not re-validate what
+      MATLAB already accepted when the stimulus was built.
+
+  - name: append
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/append.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: duration
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/duration.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Estimated stimulus duration. Portable arithmetic, but note that the
+      MATLAB implementations read StimWindowRefresh from StimWindowGlobals -
+      the refresh rate of the rig's monitor, which is a display global and is
+      not stored in the stims.mat. A Python duration therefore has to take the
+      refresh rate as an argument rather than discover it; decide that once,
+      here, when the first one is ported.
+
+  - name: eq
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/eq.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Value comparison of two objects. Portable; a Python port would be
+      __eq__. No caller needs it yet.
+
+  - name: equalstims
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/equalstims.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Compares the stimulus lists of two stimscripts, ignoring display order.
+      Portable; no caller needs it yet.
+
+  - name: get
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/get.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      GET(S, INDEX) returns the stimulus at 1-based INDEX; GET(S) returns them
+      all. One of the four functions with a caller today. Under the indexing
+      policy the Python signature keeps the 1-based index, since it is a user-
+      facing concept that appears in stimtimes.txt and in the display order.
+
+  - name: getDisplayOrder
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/getDisplayOrder.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The order in which the stimuli were shown, as 1-based indices into the
+      stimulus list. One of the four functions with a caller today, and the
+      field that ties a stims.mat to the rows of a stimtimes.txt.
+
+  - name: getallparameters
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/getallparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      getparameters over every stimulus in the script, returning a cell array.
+      Ports to a list of dicts. Cheap once stimscript.get and the per-class
+      getparameters exist.
+
+  - name: getparameters
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/getparameters.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Returns empty - a stimscript has no parameters of its own, unlike its
+      stimuli and unlike @periodicscript. Port it anyway so the polymorphic
+      call is answerable, and record here that returning None is the correct
+      behaviour rather than a stub.
+
+  - name: insert
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/insert.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: isloaded
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/isloaded.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: loadStimScript
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/loadStimScript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
+
+  - name: numStims
+    matlab_class: stimscript
+    type: method
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/numStims.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Number of stimuli in the script. One of the four functions with a caller
+      today (ndi.daq.metadatareader.NewStimStims loops over it). Trivial once
+      the stimscript object is read.
+
+  - name: plus
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/plus.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: stimTime
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/private/stimTime.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Private timing helper. Its entire body is guarded by
+      strcmp(computer,'MAC2') - Macintosh System 7/9, the platform NewStim was
+      first written for - and it returns 0 on every platform in use today. It
+      is dead code on the MATLAB side, and what it would have computed needs
+      StimWindowRefresh from StimWindowGlobals in any case. Nothing to port;
+      if script timing is ever wanted in Python, take it from
+      @stimscript/duration and an explicit refresh rate.
+
+  - name: remove
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/remove.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: saveobj
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/saveobj.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The save path. strip clears the displaystruct (the Psychtoolbox display
+      state) and saveobj calls it, so a stims.mat on disk is already stripped
+      and a Python reader has nothing to strip. Writing stims.mat is out of
+      scope in any case: scipy.io.savemat cannot write an old-style MATLAB
+      object.
+
+  - name: set
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/set.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: setDisplayMethod
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/setDisplayMethod.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Construction, not reading. Building stimuli or scripts in Python would
+      produce objects that nothing can present and that cannot be written
+      back: scipy.io.savemat cannot write an old-style MATLAB object, which is
+      what a stims.mat holds. Out of scope for a reader.
+
+  - name: stimscript
+    matlab_class: stimscript
+    type: class
+    status: not_yet_ported
+    matlab_path: "Scripts/@stimscript/stimscript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Constructor for the stimscript class - the object a stims.mat's
+      saveScript variable holds, and the entry point for everything else in
+      this repository. Its data is three fields: Stims (a cell array of
+      stimulus objects), displayOrder, and StimTimes. Note that MATLAB stores
+      it as an old-style class, which scipy.io.loadmat surfaces as a MATLAB-
+      object wrapper rather than a struct; the reader has to unwrap that. Test
+      fixtures have to be real stims.mat files recorded from MATLAB and
+      committed, because savemat cannot write one.
+
+  - name: strip
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/strip.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      The save path. strip clears the displaystruct (the Psychtoolbox display
+      state) and saveobj calls it, so a stims.mat on disk is already stripped
+      and a Python reader has nothing to strip. Writing stims.mat is out of
+      scope in any case: scipy.io.savemat cannot write an old-style MATLAB
+      object.
+
+  - name: unloadStimScript
+    matlab_class: stimscript
+    type: method
+    status: not_applicable
+    matlab_path: "Scripts/@stimscript/unloadStimScript.m"
+    matlab_last_sync_hash: "0ae6822"
+    decision_log: >
+      Psychtoolbox. Part of the presentation path: it fills, checks or
+      releases the displaystruct that NewStimDisplayProcs hands to
+      Psychtoolbox - offscreen textures, colour-lookup-table animation, movie
+      handles or sound buffers. Psychtoolbox exists only for MATLAB, so there
+      is nothing to port this to. Nor does a reader ever meet its output:
+      @stimulus/strip.m clears the displaystruct before saveobj writes a
+      stims.mat, so what is on disk is always the unloaded object.
